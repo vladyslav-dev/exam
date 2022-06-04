@@ -1,42 +1,25 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './styles/index.css';
 
-type TMatrix = string[][];
-
-type TMatrixResult = number[][];
-
-type TMatrixChangeHandler = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    rowIndex: number,
-    cellIndex: number,
-) => void;
-
 // Matrix 3 x 3 important
-const initMatrix = <T extends unknown>(defaultValue: T): T[][] => {
+const initMatrix = (defaultValue) => {
   return Array.from(Array(3), () => new Array(3).fill(defaultValue));
 }
 
 // validate input function
-const validateInput = (value: string) => {
+const validateInput = (value) => {
   return /^[0-9+-.\/]*$/.test(value);
 }
 
-
-interface MatrixProps {
-  matrix: TMatrix | TMatrixResult;
-  changeHandler?: TMatrixChangeHandler;
-  disabled?: boolean;
-}
-
-const Matrix: React.FC<MatrixProps> = ({
+const Matrix = ({
   disabled = false,
   matrix,
   changeHandler = () => {},
 }) => (
   <div className='matrix'>
-    {matrix.map((row: string[] | number[], rowIndex: number) => (
+    {matrix.map((row, rowIndex) => (
       <div className='row' key={rowIndex}>
-        {row.map((cell: string | number, cellIndex: number) => (
+        {row.map((cell, cellIndex) => (
           <div className='cell' key={`${rowIndex}-${cellIndex}`}>
             <input
               type="text"
@@ -51,14 +34,14 @@ const Matrix: React.FC<MatrixProps> = ({
   </div>
 )
 
-const App: React.FC = () => {
+const App = () => {
 
-  const [matrixA, setMatrixA] = useState<TMatrix>(() => initMatrix('2'));
-  const [matrixB, setMatrixB] = useState<TMatrix>(() => initMatrix('3'));
+  const [matrixA, setMatrixA] = useState(() => initMatrix('2'));
+  const [matrixB, setMatrixB] = useState(() => initMatrix('3'));
 
-  const [result, setResult] = useState<TMatrixResult | null>(null);
+  const [result, setResult] = useState(null);
 
-  const changeHandlerMaxtrixA: TMatrixChangeHandler = (event, rowIndex, cellIndex) => {
+  const changeHandlerMaxtrixA = (event, rowIndex, cellIndex) => {
     const { value } = event.target;
 
     if (validateInput(value)) {
@@ -68,7 +51,7 @@ const App: React.FC = () => {
     }
   }
 
-  const changeHandlerMaxtrixB: TMatrixChangeHandler = (event, rowIndex, cellIndex) => {
+  const changeHandlerMaxtrixB = (event, rowIndex, cellIndex) => {
     const { value } = event.target;
 
     if (validateInput(value)) {
@@ -83,7 +66,7 @@ const App: React.FC = () => {
     const A = matrixA.map(row => row.map(cell => parseInt(cell)));
     const B = matrixB.map(row => row.map(cell => parseInt(cell)));
 
-    const calcResult: TMatrixResult = [[], [], []];
+    const calcResult = [[], [], []];
 
     // result[0][0] = (A[0][0] * B[0][0]) + (A[0][1] * B[1][0]) + (A[0][2] * B[2][0]);
     // result[0][1] = (A[0][0] * B[0][1]) + (A[0][1] * B[1][1]) + (A[0][2] * B[2][1]);
