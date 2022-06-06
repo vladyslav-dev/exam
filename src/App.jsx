@@ -1,111 +1,77 @@
 import { useState } from 'react';
 import './styles/index.css';
 
-// Matrix 3 x 3 important
-const initMatrix = (defaultValue) => {
-  return Array.from(Array(3), () => new Array(3).fill(defaultValue));
-}
-
 // validate input function
 const validateInput = (value) => {
   return /^[0-9+-.\/]*$/.test(value);
 }
 
-const Matrix = ({
-  disabled = false,
-  matrix,
-  changeHandler = () => {},
-}) => (
-  <div className='matrix'>
-    {matrix.map((row, rowIndex) => (
-      <div className='row' key={rowIndex}>
-        {row.map((cell, cellIndex) => (
-          <div className='cell' key={`${rowIndex}-${cellIndex}`}>
-            <input
-              type="text"
-              value={cell}
-              disabled={disabled}
-              onChange={(event => changeHandler(event, rowIndex, cellIndex))}
-            />
-          </div>
-        ))}
-      </div>
-    ))}
-  </div>
-)
 
 const App = () => {
 
-  const [matrixA, setMatrixA] = useState(() => initMatrix('2'));
-  const [matrixB, setMatrixB] = useState(() => initMatrix('3'));
+  // const [A, setA] = useState(0);
+  // const [B, setB] = useState(0);
 
-  const [result, setResult] = useState(null);
+  let A = 0.5;
+  let B = 1;
+  const EPSILONE = 0.05;
 
-  const changeHandlerMaxtrixA = (event, rowIndex, cellIndex) => {
-    const { value } = event.target;
+  let Xm = (B + A) / 2;
+  let L = B - A;
 
-    if (validateInput(value)) {
-      const newMatrix = [...matrixA];
-      newMatrix[rowIndex][cellIndex] = value;
-      setMatrixA(newMatrix);
-    }
-  }
+  let X1 = A + L / 4;
+  let X2 = B - L / 4;
 
-  const changeHandlerMaxtrixB = (event, rowIndex, cellIndex) => {
-    const { value } = event.target;
 
-    if (validateInput(value)) {
-      const newMatrix = [...matrixB];
-      newMatrix[rowIndex][cellIndex] = value;
-      setMatrixB(newMatrix);
-    }
-  }
+  console.log(X1)
+  console.log(X2)
 
-  const multiplyMatrices = () => {
+  const calc = (x) => {
 
-    const A = matrixA.map(row => row.map(cell => parseInt(cell)));
-    const B = matrixB.map(row => row.map(cell => parseInt(cell)));
-
-    const calcResult = [[], [], []];
-
-    // result[0][0] = (A[0][0] * B[0][0]) + (A[0][1] * B[1][0]) + (A[0][2] * B[2][0]);
-    // result[0][1] = (A[0][0] * B[0][1]) + (A[0][1] * B[1][1]) + (A[0][2] * B[2][1]);
-    // result[0][2] = (A[0][0] * B[0][2]) + (A[0][1] * B[1][2]) + (A[0][2] * B[2][2]);
-
-    // result[1][0] = (A[1][0] * B[0][0]) + (A[1][1] * B[1][0]) + (A[1][2] * B[2][0]);
-    // result[1][1] = (A[1][0] * B[0][1]) + (A[1][1] * B[1][1]) + (A[1][2] * B[2][1]);
-    // result[1][2] = (A[1][0] * B[0][2]) + (A[1][1] * B[1][2]) + (A[1][2] * B[2][2]);
-
-    // result[2][0] = (A[2][0] * B[0][0]) + (A[2][1] * B[1][0]) + (A[2][2] * B[2][0]);
-    // result[2][1] = (A[2][0] * B[0][1]) + (A[2][1] * B[1][1]) + (A[2][2] * B[2][1]);
-    // result[2][2] = (A[2][0] * B[0][2]) + (A[2][1] * B[1][2]) + (A[2][2] * B[2][2]);
-
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
-        calcResult[i][j] = A[i][0] * B[0][j] + A[i][1] * B[1][j] + A[i][2] * B[2][j];
+    while (Math.abs(calc(Xm) - calc(x)) > EPSILONE) {
+      if (calc(Xm) > calc(x)) {
+        A = x;
+      } else {
+        B = x;
       }
-    }
-
-    const checkIsValid = calcResult.every(row => row.every(cell => !isNaN(cell)));
-
-
-    if (checkIsValid) {
-      checkIsValid && setResult(calcResult);
-    } else {
-      alert('Invalid input');
+      Xm = (B + A) / 2;
+      L = B - A;
     }
   }
+
+
+// return 10 * x * Math.log(x) - (Math.pow(x, 2) / 2)
+
+
+  const Fx1 = calc(X1);
+  const Fx2 = calc(X2);
+
+  console.log(Fx1);
+  console.log(Fx2);
 
   return (
     <div className='wrapper'>
       <div className='matrix__container'>
-        <Matrix matrix={matrixA} changeHandler={changeHandlerMaxtrixA} />
-        <Matrix matrix={matrixB} changeHandler={changeHandlerMaxtrixB} />
+        {/* <div>
+          <label htmlFor="A">A=</label>
+          <input
+            id="A"
+            type="number"
+            value={A}
+            onChange={(e) => setA(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="B">B=</label>
+          <input
+            id="B"
+            type="number"
+            value={B}
+            onChange={(e) => setB(e.target.value)}
+          />
+        </div> */}
       </div>
-      <div className='matrix__container'>
-        {result !== null && <Matrix matrix={result} disabled />}
-      </div>
-      <button onClick={multiplyMatrices}>Calc</button>
+      {/* <button onClick={test}>Calc</button> */}
     </div>
   );
 }
