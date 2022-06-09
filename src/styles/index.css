@@ -65,12 +65,13 @@ button {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 220px;
-    height: 100px;
+    width: 520px;
+    height: 520px;
     background-color: #fff;
     z-index: 3;
     border-radius: 12px;
     padding: 12px;
+    box-sizing: border-box;
 }
 
 .modal-box > button {
@@ -79,4 +80,9 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.canvasWrapper {
+    width: 100%;
+    height: 300px;
 }

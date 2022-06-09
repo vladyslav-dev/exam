@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './styles/index.css';
 
 const SUCCESSIVELY = 'SUCCESSIVELY'
@@ -10,12 +10,63 @@ const validateInput = (value) => {
 
 const App = () => {
 
-  const [R1, setR1] = useState(0);
-  const [R2, setR2] = useState(0);
+
+  const canvasRef = useRef(null);
+
+  const [R1, setR1] = useState(2);
+  const [R2, setR2] = useState(2);
 
   const [calcResult, setCalcResult] = useState(null);
 
   const [calcType, setCalcType] = useState(null); // SUCCESSIVELY or PARALLEL
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = canvas.parentElement.scrollWidth;
+      canvas.height = canvas.parentElement.scrollHeight;
+
+      const posX = 120;
+      const posY = 150;
+
+      const rectWidth = 60;
+      const rectHeight = 20;
+
+      ctx.beginPath();
+
+      ctx.moveTo(0, posY);
+      ctx.lineTo(posX, posY);
+      ctx.stroke()
+
+      ctx.closePath();
+
+      ctx.strokeRect(posX, (posY - (rectHeight / 2)), rectWidth, rectHeight);
+
+      ctx.beginPath();
+
+      ctx.moveTo(posX + rectWidth, posY);
+      ctx.lineTo((posX * 2) + rectWidth, posY);
+      ctx.stroke()
+
+      ctx.closePath();
+
+      ctx.strokeRect((posX * 2) + rectWidth, (posY - (rectHeight / 2)), rectWidth, rectHeight);
+
+      ctx.beginPath();
+
+      ctx.moveTo((posX * 2) + (rectWidth * 2), posY);
+      ctx.lineTo((posX * 3) + (rectWidth * 2), posY);
+      ctx.stroke()
+
+      ctx.closePath();
+    }
+
+
+
+
+  }, [calcResult])
 
   const handleSubmit = () => {
 
@@ -104,6 +155,9 @@ const App = () => {
           <div className='modal-box' onClick={(event) => event.stopPropagation()}>
             <button onClick={resetCalcResult}>&#10006;</button>
             <h2>Result: {calcResult}</h2>
+            <div className='canvasWrapper'>
+              <canvas ref={canvasRef}></canvas>
+            </div>
           </div>
         </div>
       )}
