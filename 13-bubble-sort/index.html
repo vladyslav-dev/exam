@@ -15,20 +15,14 @@
           <label htmlFor="inputSize">Введіть кількість елементів масиву:</label>
           <input type="number" name='inputSize' id="inputSize" min="0"/>
         </div>
-        <div className="initialArray">
-          {initArray.map( (el, index) =>
-            <input type="number" key={index} value={initArray[index]} onChange={e => {
-                setInitArray(buildUpArray(index, e.target.value, initArray))
-            }} className="arrEl"/>
-          )}
+        <div className="initialArray" id="initialInputsContainer">
+          <!-- rendering inputs for array items -->
         </div>
         <div className='sortButton'>
             <button id="sortButton">Сортувати</button>
         </div>
-        <div className='sortedArray'>
-            {sortedArray.map( (el, index) =>
-              <input type="number" disabled={true} value={sortedArray[index]} key={index} className="arrEl"/>
-            )}
+        <div className='sortedArray' id="sortedInputsContainer">
+            <!-- rendering sorted array -->
         </div>
     </div>
 
@@ -36,12 +30,15 @@
 
         const inputSize = document.querySelector('#inputSize');
         const sortButton = document.querySelector('#sortButton');
+        const initialInputsContainer = document.querySelector('#initialInputsContainer');
+        const sortedInputsContainer = document.querySelector('#sortedInputsContainer');
 
-        const resultSpan = document.querySelector('#result');
-        const select = document.querySelector('#select');
+        let size = 3;
 
-        let size = 1;
-        let sortedArray = [];
+        const initialArrayValue = new Array(size).fill(0);
+
+        let initialArray = initialArrayValue;
+        let sortedArray = initialArrayValue;
 
         const calcualteButton = document.querySelector('#calcualte');
 
@@ -51,19 +48,18 @@
             } else {
                 size = Number(inputSize.value) * -1;
             }
+
+            initialArray = initialArrayValue;
+            sortedArray = initialArrayValue;
+
+            renderInputs(initialArray, initialInputsContainer);
         });
 
         sortButton.addEventListener('click', () => {
-            setSortedArray(bubbleSort(initArray.map( el => Number(el))))
+            sortedArray = bubbleSort(initialArray);
+            console.log(sortedArray)
+            renderInputs(sortedArray, sortedInputsContainer);
         })
-
-        const [initArray, setInitArray] = useState([])
-        const [sortedArray, setSortedArray] = useState([])
-
-        useEffect(() => {
-            setInitArray(new Array(size).fill(0))
-            setSortedArray(new Array(size).fill(0))
-        }, [size])
 
         function buildUpArray(index, target, oldArray) {
             const array = oldArray.slice()
@@ -82,6 +78,24 @@
             }
             }
             return array
+        }
+
+        function renderInputs(array, container) {
+            container.innerHTML = ''
+            for(let i = 0; i < size; i++){
+                const input = document.createElement('input')
+                input.type = 'number'
+                input.value = initialArray[i]
+                input.addEventListener('input', (e) => {
+                    initialArray = buildUpArray(i, e.target.value, initialArray)
+                })
+                container.appendChild(input)
+            }
+        }
+
+        function rerenderInputs() {
+            renderInputs(initialArray, initialInputsContainer);
+            renderInputs(sortedArray, sortedInputsContainer);
         }
 
     </script>
