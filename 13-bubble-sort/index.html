@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div className="App">
+        <div className="inputSize">
+          <label htmlFor="inputSize">Введіть кількість елементів масиву:</label>
+          <input type="number" name='inputSize' id="inputSize" min="0"/>
+        </div>
+        <div className="initialArray">
+          {initArray.map( (el, index) =>
+            <input type="number" key={index} value={initArray[index]} onChange={e => {
+                setInitArray(buildUpArray(index, e.target.value, initArray))
+            }} className="arrEl"/>
+          )}
+        </div>
+        <div className='sortButton'>
+            <button id="sortButton">Сортувати</button>
+        </div>
+        <div className='sortedArray'>
+            {sortedArray.map( (el, index) =>
+              <input type="number" disabled={true} value={sortedArray[index]} key={index} className="arrEl"/>
+            )}
+        </div>
+    </div>
+
+    <script>
+
+        const inputSize = document.querySelector('#inputSize');
+        const sortButton = document.querySelector('#sortButton');
+
+        const resultSpan = document.querySelector('#result');
+        const select = document.querySelector('#select');
+
+        let size = 1;
+        let sortedArray = [];
+
+        const calcualteButton = document.querySelector('#calcualte');
+
+        inputSize.addEventListener('input', () => {
+            if (Number(inputSize.value) > 0) {
+                size = Number(inputSize.value);
+            } else {
+                size = Number(inputSize.value) * -1;
+            }
+        });
+
+        sortButton.addEventListener('click', () => {
+            setSortedArray(bubbleSort(initArray.map( el => Number(el))))
+        })
+
+        const [initArray, setInitArray] = useState([])
+        const [sortedArray, setSortedArray] = useState([])
+
+        useEffect(() => {
+            setInitArray(new Array(size).fill(0))
+            setSortedArray(new Array(size).fill(0))
+        }, [size])
+
+        function buildUpArray(index, target, oldArray) {
+            const array = oldArray.slice()
+            array[index] = target
+            return array
+        }
+
+        function bubbleSort(array) {
+            for(let i = 0; i < array.length; i++){
+            for(let j = 0; j < array.length - 1 - i; j++){
+                if(array[j] > array[j + 1]){
+                const buffer = array[j]
+                array[j] = array[j + 1]
+                array[j + 1] = buffer
+                }
+            }
+            }
+            return array
+        }
+
+    </script>
+</body>
+</html>
