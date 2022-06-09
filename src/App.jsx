@@ -39,7 +39,8 @@ const App = () => {
   const [matrixA, setMatrixA] = useState(() => initMatrix('2'));
   const [matrixB, setMatrixB] = useState(() => initMatrix('3'));
 
-  const [result, setResult] = useState(null);
+  const [resultAB, setResultAB] = useState(null);
+  const [resultBA, setResultBA] = useState(null);
 
   const changeHandlerMaxtrixA = (event, rowIndex, cellIndex) => {
     const { value } = event.target;
@@ -62,23 +63,15 @@ const App = () => {
   }
 
   const multiplyMatrices = () => {
+    multiplyAB();
+    multiplyBA();
+  }
 
+  const multiplyAB = () => {
     const A = matrixA.map(row => row.map(cell => parseInt(cell)));
     const B = matrixB.map(row => row.map(cell => parseInt(cell)));
 
     const calcResult = [[], [], []];
-
-    // result[0][0] = (A[0][0] * B[0][0]) + (A[0][1] * B[1][0]) + (A[0][2] * B[2][0]);
-    // result[0][1] = (A[0][0] * B[0][1]) + (A[0][1] * B[1][1]) + (A[0][2] * B[2][1]);
-    // result[0][2] = (A[0][0] * B[0][2]) + (A[0][1] * B[1][2]) + (A[0][2] * B[2][2]);
-
-    // result[1][0] = (A[1][0] * B[0][0]) + (A[1][1] * B[1][0]) + (A[1][2] * B[2][0]);
-    // result[1][1] = (A[1][0] * B[0][1]) + (A[1][1] * B[1][1]) + (A[1][2] * B[2][1]);
-    // result[1][2] = (A[1][0] * B[0][2]) + (A[1][1] * B[1][2]) + (A[1][2] * B[2][2]);
-
-    // result[2][0] = (A[2][0] * B[0][0]) + (A[2][1] * B[1][0]) + (A[2][2] * B[2][0]);
-    // result[2][1] = (A[2][0] * B[0][1]) + (A[2][1] * B[1][1]) + (A[2][2] * B[2][1]);
-    // result[2][2] = (A[2][0] * B[0][2]) + (A[2][1] * B[1][2]) + (A[2][2] * B[2][2]);
 
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
@@ -90,7 +83,28 @@ const App = () => {
 
 
     if (checkIsValid) {
-      checkIsValid && setResult(calcResult);
+      checkIsValid && setResultAB(calcResult);
+    } else {
+      alert('Invalid input');
+    }
+  }
+
+  const multiplyBA = () => {
+    const A = matrixA.map(row => row.map(cell => parseInt(cell)));
+    const B = matrixB.map(row => row.map(cell => parseInt(cell)));
+
+    const calcResult = [[], [], []];
+
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        calcResult[i][j] = B[i][0] * A[0][j] + B[i][1] * A[1][j] + B[i][2] * A[2][j];
+      }
+    }
+
+    const checkIsValid = calcResult.every(row => row.every(cell => !isNaN(cell)));
+
+    if (checkIsValid) {
+      checkIsValid && setResultBA(calcResult);
     } else {
       alert('Invalid input');
     }
@@ -103,7 +117,12 @@ const App = () => {
         <Matrix matrix={matrixB} changeHandler={changeHandlerMaxtrixB} />
       </div>
       <div className='matrix__container'>
-        {result !== null && <Matrix matrix={result} disabled />}
+        <h2>AB=</h2>
+        {resultAB !== null && <Matrix matrix={resultAB} disabled />}
+      </div>
+      <div className='matrix__container'>
+        <h2>BA=</h2>
+        {resultBA !== null && <Matrix matrix={resultBA} disabled />}
       </div>
       <button onClick={multiplyMatrices}>Calc</button>
     </div>
